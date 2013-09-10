@@ -1,0 +1,9 @@
+Single	200072
+Married	200050
+Divorced	200026
+Separated	200071
+Widowed	200088
+LifePartner	200048
+Unknown	200079
+Unknown	 
+
