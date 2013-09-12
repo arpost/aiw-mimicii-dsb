@@ -5,5 +5,4 @@ Separated	200071
 Widowed	200088
 LifePartner	200048
 Unknown	200079
-Unknown	 
-
+Unknown	
