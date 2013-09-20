@@ -122,7 +122,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 new ReferenceSpec[]{
                     new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "subject_id")}, ReferenceSpec.Type.ONE), 
                     new ReferenceSpec("diagnosisCodes", "Diagnosis Codes", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, ReferenceSpec.Type.MANY), 
-                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "subject_id")}, ReferenceSpec.Type.ONE), 
+                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id")}, ReferenceSpec.Type.ONE), 
                 }, 
                 null, null, null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, null),
             new EntitySpec("Diagnosis Codes", 
