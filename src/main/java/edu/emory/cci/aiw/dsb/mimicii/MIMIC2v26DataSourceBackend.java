@@ -97,7 +97,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 }, 
                 new ReferenceSpec[]{
                     new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec(getKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
-                    new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec(getKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", "subject_id")))}, ReferenceSpec.Type.ONE)
+                    new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), "subject_id")}, ReferenceSpec.Type.ONE)
                 }, 
                 null, null, null, null, null, null, null, null),};
         return constantSpecs;
