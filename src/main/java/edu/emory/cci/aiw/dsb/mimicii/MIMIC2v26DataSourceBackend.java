@@ -38,26 +38,10 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
 
     public MIMIC2v26DataSourceBackend() {
         this.mapper = new PropIdToSQLCodeMapper("/etc/mimic2v26/", getClass());
-    }
-
-    @Override
-    public String getSchemaName() {
-        return "mimic2v26";
-    }
-
-    @Override
-    public String getKeyIdTable() {
-        return "d_patients";
-    }
-
-    @Override
-    public String getKeyIdColumn() {
-        return "subject_id";
-    }
-
-    @Override
-    public String getKeyIdJoinKey() {
-        return "subject_id";
+        setSchemaName("mimic2v26");
+        setKeyIdTable("d_patients");
+        setKeyIdColumn("subject_id");
+        setKeyIdJoinKey("subject_id");
     }
 
     @Override
@@ -127,7 +111,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, null, null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, null),
             new EntitySpec("Diagnosis Codes", 
                 null, 
-                this.mapper.readCodes("icd9_diagnosis_09102013.txt", "\t", 0), 
+                this.mapper.readCodes("icd9_diagnosis_09102013.txt", 0), 
                 true, 
                 new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions"))))), 
                 new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, 
