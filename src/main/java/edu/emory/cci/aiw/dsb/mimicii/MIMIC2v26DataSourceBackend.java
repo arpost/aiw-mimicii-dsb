@@ -39,63 +39,63 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
     public MIMIC2v26DataSourceBackend() {
         this.mapper = new PropIdToSQLCodeMapper("/etc/mimic2v26/", getClass());
         setSchemaName("mimic2v26");
-        setKeyIdTable("d_patients");
-        setKeyIdColumn("subject_id");
-        setKeyIdJoinKey("subject_id");
+        setDefaultKeyIdTable("d_patients");
+        setDefaultKeyIdColumn("subject_id");
+        setDefaultKeyIdJoinKey("subject_id");
     }
 
     @Override
-    protected EntitySpec[] constantSpecs() throws IOException {
+    protected EntitySpec[] constantSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
         String schemaName = getSchemaName();
         EntitySpec[] constantSpecs = {
             new EntitySpec("Patients", 
                 null, 
                 new String[]{"PatientAll"}, 
                 false, 
-                new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn()), 
-                new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn())}, 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn), 
+                new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn)}, 
                 null, 
                 null, 
                 new PropertySpec[]{
-                    new PropertySpec("patientId", null, new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), "subject_id"), ValueType.NOMINALVALUE)
+                    new PropertySpec("patientId", null, new ColumnSpec(keyIdSchema, keyIdTable, "subject_id"), ValueType.NOMINALVALUE)
                 }, 
                 new ReferenceSpec[]{
-                    new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
-                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY)}, 
+                    new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
+                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY)}, 
                 null, null, null, null, null, null, null, null),
             new EntitySpec("Patient Details", 
                 null, 
                 new String[]{"Patient"}, 
                 true, 
-                new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn()), 
-                new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn), 
+                new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, 
                 null, 
                 null, 
                 new PropertySpec[]{
-                    new PropertySpec("patientId", null, new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn()), ValueType.NOMINALVALUE), 
-                    new PropertySpec("gender", null, new ColumnSpec(schemaName, getKeyIdTable(), "sex", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("gender_09102013.txt"), true), ValueType.NOMINALVALUE), 
-                    new PropertySpec("race", null, new ColumnSpec(schemaName, getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("race_09102013.txt"), true))), ValueType.NOMINALVALUE), 
-                    new PropertySpec("ethnicity", null, new ColumnSpec(schemaName, getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("ethnicity_09102013.txt"), true))), ValueType.NOMINALVALUE),
-                    new PropertySpec("dateOfBirth", null, new ColumnSpec(schemaName, getKeyIdTable(), "dob"), ValueType.DATEVALUE, new JDBCDateTimeTimestampDateValueFormat()),
-                    new PropertySpec("maritalStatus", null, new ColumnSpec(schemaName, getKeyIdTable(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "marital_status_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("marital_status_09102013.txt"), true))), ValueType.NOMINALVALUE)
+                    new PropertySpec("patientId", null, new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn), ValueType.NOMINALVALUE), 
+                    new PropertySpec("gender", null, new ColumnSpec(schemaName, keyIdTable, "sex", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("gender_09102013.txt"), true), ValueType.NOMINALVALUE), 
+                    new PropertySpec("race", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("race_09102013.txt"), true))), ValueType.NOMINALVALUE), 
+                    new PropertySpec("ethnicity", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("ethnicity_09102013.txt"), true))), ValueType.NOMINALVALUE),
+                    new PropertySpec("dateOfBirth", null, new ColumnSpec(schemaName, keyIdTable, "dob"), ValueType.DATEVALUE, new JDBCDateTimeTimestampDateValueFormat()),
+                    new PropertySpec("maritalStatus", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "marital_status_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("marital_status_09102013.txt"), true))), ValueType.NOMINALVALUE)
                 }, 
                 new ReferenceSpec[]{
-                    new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), new JoinSpec(getKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
-                    new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), "subject_id")}, ReferenceSpec.Type.ONE)
+                    new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, new JoinSpec(getDefaultKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
+                    new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, "subject_id")}, ReferenceSpec.Type.ONE)
                 }, 
                 null, null, null, null, null, null, null, null),};
         return constantSpecs;
     }
 
     @Override
-    protected EntitySpec[] eventSpecs() throws IOException {
+    protected EntitySpec[] eventSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
         String schemaName = getSchemaName();
         EntitySpec[] eventSpecs = {
             new EntitySpec("Encounters", 
                 null,
                 new String[]{"Encounter"}, 
                 true, 
-                new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn(), new JoinSpec(getKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions"))))), 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec(getDefaultKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions"))))), 
                 new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id")}, 
                 new ColumnSpec(schemaName, "admissions", "admit_dt"), 
                 new ColumnSpec(schemaName, "admissions", "disch_dt"), 
@@ -113,7 +113,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 this.mapper.readCodes("icd9_diagnosis_09102013.txt", 0), 
                 true, 
-                new ColumnSpec(getKeyIdSchema(), getKeyIdTable(), getKeyIdColumn(), new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions"))))), 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions"))))), 
                 new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, 
                 new ColumnSpec(schemaName, "admissions", "disch_dt"), 
                 null, 
@@ -129,12 +129,12 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
     }
 
     @Override
-    protected EntitySpec[] primitiveParameterSpecs() throws IOException {
+    protected EntitySpec[] primitiveParameterSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
         return new EntitySpec[0];
     }
 
     @Override
-    protected StagingSpec[] stagedSpecs() throws IOException {
+    protected StagingSpec[] stagedSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
         return new StagingSpec[0];
     }
 
