@@ -3,6 +3,7 @@ package edu.emory.cci.aiw.dsb.mimicii;
 import java.io.IOException;
 import org.protempa.backend.annotations.BackendInfo;
 import org.protempa.backend.dsb.relationaldb.ColumnSpec;
+import org.protempa.backend.dsb.relationaldb.Operator;
 import org.protempa.backend.dsb.relationaldb.EntitySpec;
 import org.protempa.backend.dsb.relationaldb.JDBCDateTimeTimestampDateValueFormat;
 import org.protempa.backend.dsb.relationaldb.JDBCDateTimeTimestampPositionParser;
@@ -73,11 +74,11 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 new PropertySpec[]{
                     new PropertySpec("patientId", null, new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn), ValueType.NOMINALVALUE), 
-                    new PropertySpec("gender", null, new ColumnSpec(schemaName, keyIdTable, "sex", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("gender_09102013.txt"), true), ValueType.NOMINALVALUE), 
-                    new PropertySpec("race", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("race_09102013.txt"), true))), ValueType.NOMINALVALUE), 
-                    new PropertySpec("ethnicity", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("ethnicity_09102013.txt"), true))), ValueType.NOMINALVALUE),
+                    new PropertySpec("gender", null, new ColumnSpec(schemaName, keyIdTable, "sex", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("gender_09102013.txt"), true), ValueType.NOMINALVALUE), 
+                    new PropertySpec("race", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("race_09102013.txt"), true))), ValueType.NOMINALVALUE), 
+                    new PropertySpec("ethnicity", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "ethnicity_itemid", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("ethnicity_09102013.txt"), true))), ValueType.NOMINALVALUE),
                     new PropertySpec("dateOfBirth", null, new ColumnSpec(schemaName, keyIdTable, "dob"), ValueType.DATEVALUE, new JDBCDateTimeTimestampDateValueFormat()),
-                    new PropertySpec("maritalStatus", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "marital_status_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("marital_status_09102013.txt"), true))), ValueType.NOMINALVALUE)
+                    new PropertySpec("maritalStatus", null, new ColumnSpec(schemaName, keyIdTable, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "marital_status_itemid", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("marital_status_09102013.txt"), true))), ValueType.NOMINALVALUE)
                 }, 
                 new ReferenceSpec[]{
                     new ReferenceSpec("encounters", "Encounters", new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, new JoinSpec(getDefaultKeyIdJoinKey(), "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id")))}, ReferenceSpec.Type.MANY), 
@@ -101,7 +102,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 new ColumnSpec(schemaName, "admissions", "disch_dt"), 
                 new PropertySpec[]{
                     new PropertySpec("encounterId", null, new ColumnSpec(schemaName, "admissions", "hadm_id"), ValueType.NOMINALVALUE), 
-                    new PropertySpec("type", null, new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "demographic_detail", "admission_type_itemid", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("type_encounter_09102013.txt"), true))), ValueType.NOMINALVALUE), 
+                    new PropertySpec("type", null, new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "demographic_detail", "admission_type_itemid", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("type_encounter_09102013.txt"), true))), ValueType.NOMINALVALUE), 
                 }, 
                 new ReferenceSpec[]{
                     new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "subject_id")}, ReferenceSpec.Type.ONE), 
@@ -119,10 +120,10 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 new PropertySpec[]{
                     new PropertySpec("code", null, new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "code"))), ValueType.NOMINALVALUE), 
-                    new PropertySpec("position", null, new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("icd9_diagnosis_position_09102013.txt")))), ValueType.NOMINALVALUE)}, 
+                    new PropertySpec("position", null, new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("icd9_diagnosis_position_09102013.txt")))), ValueType.NOMINALVALUE)}, 
                 null, 
                 null, 
-                new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "code", ColumnSpec.Constraint.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("icd9_diagnosis_09102013.txt"), true))), 
+                new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "code", Operator.EQUAL_TO, this.mapper.propertyNameOrPropIdToSqlCodeArray("icd9_diagnosis_09102013.txt"), true))), 
                 null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, AbsoluteTimeUnit.YEAR)
         };
         return eventSpecs;
