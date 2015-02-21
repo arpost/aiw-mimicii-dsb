@@ -16,11 +16,7 @@ import org.protempa.backend.dsb.relationaldb.StagingSpec;
 import org.protempa.backend.dsb.relationaldb.mappings.Mappings;
 import org.protempa.backend.dsb.relationaldb.mappings.ResourceMappingsFactory;
 import org.protempa.proposition.value.AbsoluteTimeGranularity;
-import org.protempa.proposition.value.AbsoluteTimeGranularityFactory;
 import org.protempa.proposition.value.AbsoluteTimeUnit;
-import org.protempa.proposition.value.AbsoluteTimeUnitFactory;
-import org.protempa.proposition.value.GranularityFactory;
-import org.protempa.proposition.value.UnitFactory;
 import org.protempa.proposition.value.ValueType;
 
 /**
@@ -32,10 +28,6 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
 
     private static JDBCPositionFormat jdbcTimestampPositionParser =
             new JDBCDateTimeTimestampPositionParser();
-    private static AbsoluteTimeUnitFactory absTimeUnitFactory =
-            new AbsoluteTimeUnitFactory();
-    private static AbsoluteTimeGranularityFactory absTimeGranularityFactory =
-            new AbsoluteTimeGranularityFactory();
     public MIMIC2v26DataSourceBackend() {
         setSchemaName("mimic2v26");
         setDefaultKeyIdTable("d_patients");
@@ -139,14 +131,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
         return new StagingSpec[0];
     }
 
-    public GranularityFactory getGranularityFactory() {
-        return absTimeGranularityFactory;
-    }
-
-    public UnitFactory getUnitFactory() {
-        return absTimeUnitFactory;
-    }
-
+    @Override
     public String getKeyType() {
         return "Patient";
     }
