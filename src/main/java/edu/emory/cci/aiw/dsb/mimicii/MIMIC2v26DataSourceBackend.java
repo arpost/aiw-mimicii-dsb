@@ -42,7 +42,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
         EntitySpec[] constantSpecs = {
             new EntitySpec("Patients", 
                 null, 
-                new String[]{"PatientAll"}, 
+                new String[]{"Patient"}, 
                 false, 
                 new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn), 
                 new ColumnSpec[]{new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn)}, 
@@ -57,7 +57,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, null, null, null, null, null, null, null),
             new EntitySpec("Patient Details", 
                 null, 
-                new String[]{"Patient"}, 
+                new String[]{"PatientDetails"}, 
                 true, 
                 new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", "hadm_id"))), 
                 new ColumnSpec[]{new ColumnSpec(schemaName, "demographic_detail", "hadm_id")}, 
@@ -98,7 +98,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 }, 
                 new ReferenceSpec[]{
                     new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "subject_id")}, ReferenceSpec.Type.ONE), 
-                    new ReferenceSpec("diagnosisCodes", "Diagnosis Codes", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, ReferenceSpec.Type.MANY), 
+                    new ReferenceSpec("EK_ICD9D", "Diagnosis Codes", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, ReferenceSpec.Type.MANY), 
                     new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id")}, ReferenceSpec.Type.ONE), 
                 }, 
                 null, null, null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, null),
@@ -112,7 +112,7 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 new PropertySpec[]{
                     new PropertySpec("code", null, new ColumnSpec(schemaName, "icd9", "code"), ValueType.NOMINALVALUE), 
-                    new PropertySpec("position", null, new ColumnSpec(schemaName, "icd9", "sequence", Operator.EQUAL_TO, getMappingsFactory().getInstance("icd9_diagnosis_position_09102013.txt")), ValueType.NOMINALVALUE)}, 
+                    new PropertySpec("DXPRIORITY", null, new ColumnSpec(schemaName, "icd9", "sequence", Operator.EQUAL_TO, getMappingsFactory().getInstance("icd9_diagnosis_position_09102013.txt")), ValueType.NOMINALVALUE)}, 
                 null, 
                 null, 
                 new ColumnSpec(schemaName, "icd9", "code", Operator.EQUAL_TO, icd9DxMappings, true), 
