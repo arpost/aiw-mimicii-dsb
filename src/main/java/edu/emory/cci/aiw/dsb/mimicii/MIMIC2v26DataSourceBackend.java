@@ -116,7 +116,8 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 null, 
                 new ColumnSpec(schemaName, "icd9", "code", Operator.EQUAL_TO, icd9DxMappings, true), 
-                null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, AbsoluteTimeUnit.YEAR)
+                null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, AbsoluteTimeUnit.YEAR,
+                new int[]{5,2})
         };
         return eventSpecs;
     }
