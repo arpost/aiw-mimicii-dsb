@@ -100,7 +100,9 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 new ReferenceSpec[]{
                     new ReferenceSpec("patient", "Patients", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "subject_id")}, ReferenceSpec.Type.ONE), 
                     new ReferenceSpec("EK_ICD9D", "Diagnosis Codes", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "sequence")))}, ReferenceSpec.Type.MANY), 
-                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id")}, ReferenceSpec.Type.ONE), 
+                    new ReferenceSpec("EK_ICD9P", "Procedure Codes", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "procedureevents", "sequence_num")))}, ReferenceSpec.Type.MANY), 
+                    new ReferenceSpec("patientDetails", "Patient Details", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id")}, ReferenceSpec.Type.ONE),
+                    new ReferenceSpec("EK_LABS", "Labs", new ColumnSpec[]{new ColumnSpec(schemaName, "admissions", "hadm_id"), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "labevents", "itemid"))), new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "labevents", "charttime")))}, ReferenceSpec.Type.MANY)
                 }, 
                 null, null, null, null, null, AbsoluteTimeGranularity.DAY, jdbcTimestampPositionParser, null),
             new EntitySpec("Diagnosis Codes", 
@@ -123,17 +125,18 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
                 null, 
                 icd9PxMappings.readTargets(), 
                 true, 
-                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "icd9", "code"))))))), 
-                new ColumnSpec[]{new ColumnSpec(schemaName, "icd9", "hadm_id"), new ColumnSpec(schemaName, "icd9", "sequence")}, 
-                new ColumnSpec(schemaName, "icd9", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions", "disch_dt"))), 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "procedureevents"))))))), 
+                new ColumnSpec[]{new ColumnSpec(schemaName, "procedureevents", "hadm_id"), new ColumnSpec(schemaName, "procedureevents", "sequence_num")}, 
+                new ColumnSpec(schemaName, "procedureevents", "proc_dt"), 
                 null, 
                 new PropertySpec[]{
-                    new PropertySpec("code", null, new ColumnSpec(schemaName, "icd9", "code"), ValueType.NOMINALVALUE)
+                    new PropertySpec("code", null, new ColumnSpec(schemaName, "procedureevents", new JoinSpec("itemid", "itemid", new ColumnSpec(schemaName, "d_codeditems", "code"))), ValueType.NOMINALVALUE)
                 },
                 null, 
                 null, 
-                new ColumnSpec(schemaName, "icd9", "code", Operator.EQUAL_TO, icd9PxMappings, true), 
-                null, null, null, AbsoluteTimeGranularity.MINUTE, jdbcTimestampPositionParser, null),
+                new ColumnSpec(schemaName, "procedureevents", new JoinSpec("itemid", "itemid", new ColumnSpec(schemaName, "d_codeditems", "code", Operator.EQUAL_TO, icd9PxMappings, true))), 
+                null, null, null, AbsoluteTimeGranularity.MINUTE, jdbcTimestampPositionParser, null,
+                new int[]{5, 2}),
         };
         return eventSpecs;
     }
@@ -142,64 +145,26 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
     protected EntitySpec[] primitiveParameterSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
         String schemaName = getSchemaName();
         Mappings labsMappings = getMappingsFactory().getInstance("lab_09102015.txt");
-        Mappings cardiacOutputMappings = getMappingsFactory().getInstance("cardiac_output_09102015.txt");
+//        Mappings cardiacOutputMappings = getMappingsFactory().getInstance("cardiac_output_09102015.txt");
         EntitySpec[] entitySpecs = {
             new EntitySpec("Labs", null,
-			labsMappings.readTargets(),
-			true, new ColumnSpec(keyIdSchema, keyIdTable,
-			keyIdColumn,
-			new JoinSpec("PATIENT_KEY", "PATIENT_KEY",
-			new ColumnSpec(schemaName, "ENCOUNTER",
-			new JoinSpec("ENCOUNTER_KEY",
-			"ENCOUNTER_KEY",
-			new ColumnSpec(schemaName,
-			"LABS_EVENT"))))),
-			new ColumnSpec[]{
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"EVENT_KEY")},
-			new ColumnSpec(schemaName, "LABS_EVENT", "TS_OBX"),
-			null, new PropertySpec[]{
-				new PropertySpec("unitOfMeasure", null,
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"UNITS"), ValueType.NOMINALVALUE),
+		labsMappings.readTargets(),
+		true, 
+                new ColumnSpec(keyIdSchema, keyIdTable, keyIdColumn, new JoinSpec("subject_id", "subject_id", new ColumnSpec(schemaName, "demographic_detail", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "admissions", new JoinSpec("hadm_id", "hadm_id", new ColumnSpec(schemaName, "labevents"))))))), 
+                new ColumnSpec[]{new ColumnSpec(schemaName, "labevents", "hadm_id"), new ColumnSpec(schemaName, "labevents", "itemid"), new ColumnSpec(schemaName, "labevents", "charttime")}, 
+		new ColumnSpec(schemaName, "labevents", "charttime"),
+		null, 
+                new PropertySpec[]{
+				new PropertySpec("unitOfMeasure", null, new ColumnSpec(schemaName, "labevents", "valueuom"), ValueType.NOMINALVALUE),
 				/*new PropertySpec("referenceRangeLow", null, new ColumnSpec(schemaName, "fact_result_lab", "reference_range_low_val"), ValueType.NUMBERVALUE), new PropertySpec("referenceRangeHigh", null, new ColumnSpec(schemaName, "fact_result_lab", "reference_range_high_val"), ValueType.NUMBERVALUE), */
-				new PropertySpec("interpretation", null,
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"FLAG"), ValueType.NOMINALVALUE)}, null,
-			null,
-			new ColumnSpec(schemaName, "LABS_EVENT", "ENTITY_ID",
-			Operator.EQUAL_TO, labsMappings, true), null,
-			new ColumnSpec(schemaName, "LABS_EVENT", "RESULT_STR"),
-			ValueType.VALUE, AbsoluteTimeGranularity.MINUTE,
-			jdbcTimestampPositionParser, null),
-            new EntitySpec("Cardiac Output", null,
-			cardiacOutputMappings.readTargets(),
-			true, new ColumnSpec(keyIdSchema, keyIdTable,
-			keyIdColumn,
-			new JoinSpec("PATIENT_KEY", "PATIENT_KEY",
-			new ColumnSpec(schemaName, "ENCOUNTER",
-			new JoinSpec("ENCOUNTER_KEY",
-			"ENCOUNTER_KEY",
-			new ColumnSpec(schemaName,
-			"LABS_EVENT"))))),
-			new ColumnSpec[]{
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"EVENT_KEY")},
-			new ColumnSpec(schemaName, "LABS_EVENT", "TS_OBX"),
-			null, new PropertySpec[]{
-				new PropertySpec("unitOfMeasure", null,
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"UNITS"), ValueType.NOMINALVALUE),
-				/*new PropertySpec("referenceRangeLow", null, new ColumnSpec(schemaName, "fact_result_lab", "reference_range_low_val"), ValueType.NUMBERVALUE), new PropertySpec("referenceRangeHigh", null, new ColumnSpec(schemaName, "fact_result_lab", "reference_range_high_val"), ValueType.NUMBERVALUE), */
-				new PropertySpec("interpretation", null,
-				new ColumnSpec(schemaName, "LABS_EVENT",
-				"FLAG"), ValueType.NOMINALVALUE)}, null,
-			null,
-			new ColumnSpec(schemaName, "LABS_EVENT", "ENTITY_ID",
-			Operator.EQUAL_TO, cardiacOutputMappings, true), null,
-			new ColumnSpec(schemaName, "LABS_EVENT", "RESULT_STR"),
-			ValueType.VALUE, AbsoluteTimeGranularity.MINUTE,
-			jdbcTimestampPositionParser, null)
+				new PropertySpec("interpretation", null, new ColumnSpec(schemaName, "labevents", "flag"), ValueType.NOMINALVALUE)}, 
+                null,
+                null,
+		new ColumnSpec(schemaName, "labevents", new JoinSpec("itemid", "itemid", new ColumnSpec(schemaName, "d_labitems", "loinc_code", Operator.EQUAL_TO, labsMappings, true))), 
+                null,
+		new ColumnSpec(schemaName, "labevents", "value"),
+                ValueType.VALUE, AbsoluteTimeGranularity.MINUTE,
+		jdbcTimestampPositionParser, null),
         };
         return entitySpecs;
     }
