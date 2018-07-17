@@ -32,7 +32,6 @@ import org.protempa.backend.dsb.relationaldb.JoinSpec;
 import org.protempa.backend.dsb.relationaldb.PropertySpec;
 import org.protempa.backend.dsb.relationaldb.ReferenceSpec;
 import org.protempa.backend.dsb.relationaldb.RelationalDbDataSourceBackend;
-import org.protempa.backend.dsb.relationaldb.StagingSpec;
 import org.protempa.backend.dsb.relationaldb.mappings.Mappings;
 import org.protempa.backend.dsb.relationaldb.mappings.ResourceMappingsFactory;
 import org.protempa.proposition.value.AbsoluteTimeGranularity;
@@ -189,11 +188,6 @@ public class MIMIC2v26DataSourceBackend extends RelationalDbDataSourceBackend {
 		jdbcTimestampPositionParser, null),
         };
         return entitySpecs;
-    }
-
-    @Override
-    protected StagingSpec[] stagedSpecs(String keyIdSchema, String keyIdTable, String keyIdColumn, String keyIdJoinKey) throws IOException {
-        return new StagingSpec[0];
     }
 
     @Override
