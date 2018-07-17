@@ -57,6 +57,7 @@ databaseId = JDBC URL for the data schema
 username = username with privileges to read the data schema
 password = data schema user's password
 schemaName = name of the data schema
+```
 
 ## Developer documentation
 [Javadoc for latest development release](http://javadoc.io/doc/org.eurekaclinical/aiw-mimicii-dsb) [![Javadocs](http://javadoc.io/badge/org.eurekaclinical/aiw-mimicii-dsb.svg)](http://javadoc.io/doc/org.eurekaclinical/aiw-mimicii-dsb)
