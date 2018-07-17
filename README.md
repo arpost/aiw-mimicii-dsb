@@ -42,7 +42,7 @@ Put the `aiw-mimicii-dsb` jarfile and its dependencies in the classpath, and Pro
 
 ### Backend configuration
 
-#### `edu.emory.cci.aiw.i2b2etl.dsb.I2b2DataSourceBackend`
+#### `edu.emory.cci.aiw.dsb.mimicii.MIMIC2v26DataSourceBackend`
 * `databaseAPI`: `DRIVERMANAGER` or `DATASOURCE` depending on whether the `databaseId` property contains a JDBC URL or a JNDI URL, respectively.
 * `databaseId`: a JDBC URL or a JNDI URL for connecting to the i2b2 data schema.
 * `username`: for JDBC URLs, a database username.
